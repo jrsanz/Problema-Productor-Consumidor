@@ -15,6 +15,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                                 };
     int indice_productor = 0;
     int indice_consumidor = 0;
+    static final int max = 20;
     
     public Productor_Consumidor() {
         initComponents();
@@ -30,12 +31,24 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         productor_consumidor.start();   //Comienza a ejecutarse el hilo
     }
     
+    private void EvaluarProductor() {
+        if (indice_productor >= max) {
+            indice_productor = 0;
+        }
+    }
+    
+    private void EvaluarConsumidor() {
+        if (indice_consumidor >= max) {
+            indice_consumidor = 0;
+        }
+    }
+    
     private void SetArrayList() {
-        for(int i = 0; i < 20; i++)
+        for(int i = 0; i < max; i++)
             productos.add(i, "—");
     }
     
-    private int LanzamientoMoneda() {
+    private int LanzamientoMoneda() { //Se decide quien trabaja en ese momento, si el productor o consumidor
         int numero_aleatorio = (int) (Math.floor(Math.random() * 2));   // 0 = Productor, 1 = Consumidor
         System.out.println("Lanzamiento Moneda: " + numero_aleatorio);
         return numero_aleatorio;
@@ -50,17 +63,22 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     //50 productos
     private void Producir(int veces) {
         for(int i = 0; i < veces; i++) {
-            String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length + 1))];
+            EvaluarProductor();
+            String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length))];
             productos.set(indice_productor, producto_generado);
             SetTextField(indice_productor, productos.get(indice_productor));
+            
             indice_productor++;
+            
         }
     }
     
     private void Consumir(int veces) {
         for(int i = 0; i < veces; i++) {
+            EvaluarConsumidor();
             productos.set(indice_consumidor, "—");
             SetTextField(indice_consumidor, productos.get(indice_consumidor));
+            
             indice_consumidor++;
         }
     }
@@ -355,6 +373,8 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 int quien_trabaja = LanzamientoMoneda();
                 int num_veces = NumeroProductos();
                 
+          
+          
                 if(quien_trabaja == 0)
                     Producir(num_veces);
                 else
