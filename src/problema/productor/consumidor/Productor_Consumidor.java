@@ -1,7 +1,10 @@
 package problema.productor.consumidor;
 
+import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 
 public class Productor_Consumidor extends javax.swing.JFrame {
@@ -16,6 +19,12 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     int indice_productor = 0;
     int indice_consumidor = 0;
     static final int max = 20;
+    int total_productos = 0;
+    Color color_defecto = new Color(240,240,240);      //#F0F0F0
+    Color color_productor = new Color(255,217,102);    //#FFD966
+    Color color_consumidor = new Color(255,181,144);   //#FFB590
+    int descolorear_productor = 0;
+    int descolorear_consumidor = 0;
     
     public Productor_Consumidor() {
         initComponents();
@@ -48,63 +57,96 @@ public class Productor_Consumidor extends javax.swing.JFrame {
             productos.add(i, "—");
     }
     
-    private int LanzamientoMoneda() { //Se decide quien trabaja en ese momento, si el productor o consumidor
+    private int LanzamientoMoneda() {   //Se decide quien trabaja en ese momento, si el productor o consumidor
         int numero_aleatorio = (int) (Math.floor(Math.random() * 2));   // 0 = Productor, 1 = Consumidor
         System.out.println("Lanzamiento Moneda: " + numero_aleatorio);
         return numero_aleatorio;
     }
     
     private int NumeroProductos() {
-        int numero_aleatorio = (int) (Math.floor(Math.random() * 5) + 1);   //Números aleatorios del 1 - 4
+        int numero_aleatorio = (int) (Math.floor(Math.random() * 4) + 1);   //Números aleatorios del 1 - 4
         System.out.println("Número de Productos: " + numero_aleatorio);
         return numero_aleatorio;
     }
     
     //50 productos
     private void Producir(int veces) {
-        for(int i = 0; i < veces; i++) {
-            EvaluarProductor();
-            String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length))];
-            productos.set(indice_productor, producto_generado);
-            SetTextField(indice_productor, productos.get(indice_productor));
-            
-            indice_productor++;
-            
+        if(total_productos >= max) {
+            JOptionPane.showMessageDialog(null, "La lista de productos se encuentra llena.", "Error del productor", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            for(int i = 0; i < veces; i++) {
+                EvaluarProductor();
+                String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length))];
+                productos.set(indice_productor, producto_generado);
+                SetTextField(descolorear_productor, productos.get(descolorear_productor), false);
+                SetTextField(indice_productor, productos.get(indice_productor), false);
+
+                indice_productor++;
+                total_productos++;
+            }
+            SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
+            descolorear_productor = indice_productor-1;
+            lblConsumio.setText("");
+            lblProdujo.setText("Produjo " + veces + " producto(s).");
         }
     }
     
     private void Consumir(int veces) {
-        for(int i = 0; i < veces; i++) {
-            EvaluarConsumidor();
-            productos.set(indice_consumidor, "—");
-            SetTextField(indice_consumidor, productos.get(indice_consumidor));
-            
-            indice_consumidor++;
+        if(total_productos < veces) {
+            JOptionPane.showMessageDialog(null, "No es posible retirar más productos de los que hay en la lista.", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            for(int i = 0; i < veces; i++) {
+                EvaluarConsumidor();
+                productos.set(indice_consumidor, "—");
+                SetTextField(descolorear_consumidor, productos.get(descolorear_consumidor), false);
+                SetTextField(indice_consumidor, productos.get(indice_consumidor), false);
+
+                indice_consumidor++;
+                total_productos--;
+            }
+            SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
+            descolorear_consumidor = indice_consumidor-1;
+            lblProdujo.setText("");
+            lblConsumio.setText("Consumió " + veces + " producto(s).");
         }
     }
 
-    private void SetTextField(int num, String txt) {
-        switch (num) {
-            case 1: txt1.setText(txt); break;
-            case 2: txt2.setText(txt); break;
-            case 3: txt3.setText(txt); break;
-            case 4: txt4.setText(txt); break;
-            case 5: txt5.setText(txt); break;
-            case 6: txt6.setText(txt); break;
-            case 7: txt7.setText(txt); break;
-            case 8: txt8.setText(txt); break;
-            case 9: txt9.setText(txt); break;
-            case 10: txt10.setText(txt); break;
-            case 11: txt11.setText(txt); break;
-            case 12: txt12.setText(txt); break;
-            case 13: txt13.setText(txt); break;
-            case 14: txt14.setText(txt); break;
-            case 15: txt15.setText(txt); break;
-            case 16: txt16.setText(txt); break;
-            case 17: txt17.setText(txt); break;
-            case 18: txt18.setText(txt); break;
-            case 19: txt19.setText(txt); break;
-            case 20: txt20.setText(txt); break;
+    private void SetTextField(int num, String txt, boolean colorear) {
+        Color color;
+        
+        if(colorear && num == indice_productor-1) {
+            color = new Color(255,217,102);
+        }
+        else if(colorear && num == indice_consumidor-1) {
+            color = new Color(255,181,144);
+        }
+        else {
+            color = new Color(240,240,240);
+        }
+        
+        switch (num+1) {
+            case 1: txt1.setText(txt); txt1.setBackground(color); break;
+            case 2: txt2.setText(txt); txt2.setBackground(color); break;
+            case 3: txt3.setText(txt); txt3.setBackground(color); break;
+            case 4: txt4.setText(txt); txt4.setBackground(color); break;
+            case 5: txt5.setText(txt); txt5.setBackground(color); break;
+            case 6: txt6.setText(txt); txt6.setBackground(color); break;
+            case 7: txt7.setText(txt); txt7.setBackground(color); break;
+            case 8: txt8.setText(txt); txt8.setBackground(color); break;
+            case 9: txt9.setText(txt); txt9.setBackground(color); break;
+            case 10: txt10.setText(txt); txt10.setBackground(color); break;
+            case 11: txt11.setText(txt); txt11.setBackground(color); break;
+            case 12: txt12.setText(txt); txt12.setBackground(color); break;
+            case 13: txt13.setText(txt); txt13.setBackground(color); break;
+            case 14: txt14.setText(txt); txt14.setBackground(color); break;
+            case 15: txt15.setText(txt); txt15.setBackground(color); break;
+            case 16: txt16.setText(txt); txt16.setBackground(color); break;
+            case 17: txt17.setText(txt); txt17.setBackground(color); break;
+            case 18: txt18.setText(txt); txt18.setBackground(color); break;
+            case 19: txt19.setText(txt); txt19.setBackground(color); break;
+            case 20: txt20.setText(txt); txt20.setBackground(color); break;
         }
     }
     
@@ -141,12 +183,26 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         txt18 = new javax.swing.JTextField();
         txt19 = new javax.swing.JTextField();
         txt20 = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        lblProductor = new javax.swing.JLabel();
+        lblProdujo = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        lblConsumidor = new javax.swing.JLabel();
+        lblConsumio = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(600, 500));
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         lblTitulo.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
         lblTitulo.setText("Productor-Consumidor");
+
+        jPanel1.setBackground(new java.awt.Color(153, 176, 192));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setName(""); // NOI18N
 
         txt1.setEditable(false);
         txt1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -334,32 +390,116 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
+        jPanel2.setBackground(new java.awt.Color(255, 217, 102));
+        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel2.setMaximumSize(new java.awt.Dimension(180, 100));
+        jPanel2.setMinimumSize(new java.awt.Dimension(180, 100));
+
+        lblProductor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblProductor.setText("PRODUCTOR");
+
+        lblProdujo.setText("Produjo X productos.");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(lblProdujo))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(lblProductor)))
+                .addContainerGap(39, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblProductor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(lblProdujo)
+                .addGap(33, 33, 33))
+        );
+
+        jPanel3.setBackground(new java.awt.Color(255, 181, 144));
+        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel3.setMaximumSize(new java.awt.Dimension(180, 100));
+        jPanel3.setMinimumSize(new java.awt.Dimension(180, 100));
+
+        lblConsumidor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblConsumidor.setText("CONSUMIDOR");
+
+        lblConsumio.setText("Consumió X productos.");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(36, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(lblConsumio)
+                        .addGap(34, 34, 34))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(lblConsumidor)
+                        .addGap(43, 43, 43))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblConsumidor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(lblConsumio)
+                .addGap(35, 35, 35))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(67, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(66, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTitulo)
                         .addGap(178, 178, 178))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(64, 64, 64))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(lblTitulo)
-                .addGap(68, 68, 68)
+                .addGap(34, 34, 34)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            JOptionPane.showMessageDialog(null, "El programa ha terminado con éxito.", "Fin del programa", JOptionPane.OK_OPTION);
+            this.dispose();
+        }
+    }//GEN-LAST:event_formKeyPressed
 
     private class HiloPrograma extends Thread {
         public void run() {
@@ -373,8 +513,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 int quien_trabaja = LanzamientoMoneda();
                 int num_veces = NumeroProductos();
                 
-          
-          
                 if(quien_trabaja == 0)
                     Producir(num_veces);
                 else
@@ -424,6 +562,12 @@ public class Productor_Consumidor extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblConsumidor;
+    private javax.swing.JLabel lblConsumio;
+    private javax.swing.JLabel lblProductor;
+    private javax.swing.JLabel lblProdujo;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txt1;
     private javax.swing.JTextField txt10;
