@@ -1,10 +1,15 @@
 package problema.productor.consumidor;
 
-import com.sun.glass.events.KeyEvent;
+//import com.sun.glass.events.KeyEvent; //error
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JTextField;
 
 
 public class Productor_Consumidor extends javax.swing.JFrame {
@@ -26,6 +31,16 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     int descolorear_productor = 0;
     int descolorear_consumidor = 0;
     
+ 
+//    private static volatile boolean escPressed = false;
+//    public static boolean isEscPressed() {
+//        synchronized (Productor_Consumidor.class) {
+//            return wPressed;
+//        }
+//    }
+    
+    
+    
     public Productor_Consumidor() {
         initComponents();
         
@@ -39,6 +54,8 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         SetArrayList();                 //Asigna por defecto el valor "—", lo que quiere decir que no hay productos agregados
         productor_consumidor.start();   //Comienza a ejecutarse el hilo
     }
+    
+    
     
     private void EvaluarProductor() {
         if (indice_productor >= max) {
@@ -495,7 +512,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if(evt.getKeyChar() == 'a') {
             JOptionPane.showMessageDialog(null, "El programa ha terminado con éxito.", "Fin del programa", JOptionPane.OK_OPTION);
             this.dispose();
         }
@@ -510,6 +527,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
             } catch (InterruptedException ex) {}
             
             while(true) {
+                
                 int quien_trabaja = LanzamientoMoneda();
                 int num_veces = NumeroProductos();
                 
@@ -551,11 +569,20 @@ public class Productor_Consumidor extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Productor_Consumidor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+            
         /* Create and display the form */
+        
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new Productor_Consumidor().setVisible(true);
+                JTextField component = new JTextField();
+                component.addKeyListener(new MyKeyListener());
+                Productor_Consumidor p = new Productor_Consumidor();
+                p.add(component);
+                p.setVisible(true);
+//                new Productor_Consumidor().setVisible(true);
+//                Productor_Consumidor().add(component);
             }
         });
     }
@@ -590,4 +617,16 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     private javax.swing.JTextField txt8;
     private javax.swing.JTextField txt9;
     // End of variables declaration//GEN-END:variables
+}
+
+class MyKeyListener extends KeyAdapter { // Clase que detecta el evento del teclado
+  public void keyPressed(KeyEvent evt) {
+//    if (evt.getKeyChar() == 'a') {
+//      System.out.println("Check for key characters: " + evt.getKeyChar());
+//    }
+    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) { //Si se presiona escape salimos del programa
+//      System.out.println("Check for key codes: " + evt.getKeyCode());
+        System.exit(0);
+    }
+  }
 }
