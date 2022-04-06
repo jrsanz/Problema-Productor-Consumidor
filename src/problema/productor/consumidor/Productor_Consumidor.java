@@ -3,7 +3,6 @@ package problema.productor.consumidor;
 //import com.sun.glass.events.KeyEvent; //error
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javax.swing.JOptionPane;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -20,7 +19,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                                 "Huevo", "Aceite", "Encendedor", "Frijoles", "Chiles", "Aluminio", "Yogur", "Pan", "Jamón", "Salchicha",
                                 "Suero", "Rastrillo", "Shampoo", "Servilletas", "Pilas", "Té", "Chocolate", "Detergente", "Cloro", "Vasos",
                                 "Platos", "Cerillos", "Cereal", "Palomitas", "Galletas", "Atún", "Medicamento", "Carbón", "Fibras", "Cinta"
-                                };
+                                };   //50 productos
     int indice_productor = 0;
     int indice_consumidor = 0;
     static final int max = 20;
@@ -30,15 +29,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     Color color_consumidor = new Color(255,181,144);   //#FFB590
     int descolorear_productor = 0;
     int descolorear_consumidor = 0;
-    
- 
-//    private static volatile boolean escPressed = false;
-//    public static boolean isEscPressed() {
-//        synchronized (Productor_Consumidor.class) {
-//            return wPressed;
-//        }
-//    }
-    
     
     
     public Productor_Consumidor() {
@@ -54,7 +44,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         SetArrayList();                 //Asigna por defecto el valor "—", lo que quiere decir que no hay productos agregados
         productor_consumidor.start();   //Comienza a ejecutarse el hilo
     }
-    
     
     
     private void EvaluarProductor() {
@@ -74,7 +63,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
             productos.add(i, "—");
     }
     
-    private int LanzamientoMoneda() {   //Se decide quien trabaja en ese momento, si el productor o consumidor
+    private int LanzamientoMoneda() {   //Se decide quien trabaja en ese momento, si el productor o consumidor (Semáforo)
         int numero_aleatorio = (int) (Math.floor(Math.random() * 2));   // 0 = Productor, 1 = Consumidor
         System.out.println("Lanzamiento Moneda: " + numero_aleatorio);
         return numero_aleatorio;
@@ -86,15 +75,15 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         return numero_aleatorio;
     }
     
-    //50 productos
     private void Producir(int veces) {
-        if(total_productos >= max) {
-            JOptionPane.showMessageDialog(null, "La lista de productos se encuentra llena.", "Error del productor", JOptionPane.ERROR_MESSAGE);
+        if(total_productos + veces >= max) {
+            JOptionPane.showMessageDialog(null, "No es posible producir más productos de los que se pueden almacenar.", "Error del productor", JOptionPane.ERROR_MESSAGE);
         }
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarProductor();
                 if (productos.get(indice_productor) != "—") {
+                    //Poner icono productor esperando
                     JOptionPane.showMessageDialog(null, "Intentando producir... Esperando al consumidor", "Error del productor", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -106,10 +95,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                     indice_productor++;
                     total_productos++;
                 }
-                
             }
+            if(indice_consumidor > 0)
+                SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
             SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
             descolorear_productor = indice_productor-1;
+            //Poner icono productor trabajando
+            //Poner icono consumidor durmiendo
             lblConsumio.setText("");
             lblProdujo.setText("Produjo " + veces + " producto(s).");
         }
@@ -117,12 +109,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     
     private void Consumir(int veces) {
         if(total_productos < veces) {
-            JOptionPane.showMessageDialog(null, "No es posible retirar más productos de los que hay en la lista.", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No es posible consumir más productos de los que hay en la lista.", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
         }
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarConsumidor();
                 if (productos.get(indice_consumidor) == "—") {
+                    //Poner icono consumidor esperando
                     JOptionPane.showMessageDialog(null, "Intentando consumir... Esperando al productor", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -133,10 +126,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                     indice_consumidor++;
                     total_productos--;
                 }
-                
             }
+            if(indice_productor > 0)
+                SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
             SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
             descolorear_consumidor = indice_consumidor-1;
+            //Poner icono consumidor trabajando
+            //Poner icono productor durmiendo
             lblProdujo.setText("");
             lblConsumio.setText("Consumió " + veces + " producto(s).");
         }
@@ -146,13 +142,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         Color color;
         
         if(colorear && num == indice_productor-1) {
-            color = new Color(255,217,102);
+            color = color_productor;
         }
         else if(colorear && num == indice_consumidor-1) {
-            color = new Color(255,181,144);
+            color = color_consumidor;
         }
         else {
-            color = new Color(240,240,240);
+            color = color_defecto;
         }
         
         switch (num+1) {
@@ -524,10 +520,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        if(evt.getKeyChar() == 'a') {
-            JOptionPane.showMessageDialog(null, "El programa ha terminado con éxito.", "Fin del programa", JOptionPane.OK_OPTION);
-            this.dispose();
-        }
+
     }//GEN-LAST:event_formKeyPressed
 
     private class HiloPrograma extends Thread {
@@ -593,8 +586,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 Productor_Consumidor p = new Productor_Consumidor();
                 p.add(component);
                 p.setVisible(true);
-//                new Productor_Consumidor().setVisible(true);
-//                Productor_Consumidor().add(component);
             }
         });
     }
@@ -631,13 +622,9 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 }
 
-class MyKeyListener extends KeyAdapter { // Clase que detecta el evento del teclado
+class MyKeyListener extends KeyAdapter {   //Clase que detecta el evento del teclado
   public void keyPressed(KeyEvent evt) {
-//    if (evt.getKeyChar() == 'a') {
-//      System.out.println("Check for key characters: " + evt.getKeyChar());
-//    }
-    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) { //Si se presiona escape salimos del programa
-//      System.out.println("Check for key codes: " + evt.getKeyCode());
+    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {   //Si se presiona escape salimos del programa
         System.exit(0);
     }
   }
