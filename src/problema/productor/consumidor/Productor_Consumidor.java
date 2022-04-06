@@ -94,13 +94,19 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarProductor();
-                String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length))];
-                productos.set(indice_productor, producto_generado);
-                SetTextField(descolorear_productor, productos.get(descolorear_productor), false);
-                SetTextField(indice_productor, productos.get(indice_productor), false);
+                if (productos.get(indice_productor) != "—") {
+                    JOptionPane.showMessageDialog(null, "Intentando producir... Esperando al consumidor", "Error del productor", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    String producto_generado = lista_productos[(int) (Math.floor(Math.random() * lista_productos.length))];
+                    productos.set(indice_productor, producto_generado);
+                    SetTextField(descolorear_productor, productos.get(descolorear_productor), false);
+                    SetTextField(indice_productor, productos.get(indice_productor), false);
 
-                indice_productor++;
-                total_productos++;
+                    indice_productor++;
+                    total_productos++;
+                }
+                
             }
             SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
             descolorear_productor = indice_productor-1;
@@ -116,12 +122,18 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarConsumidor();
-                productos.set(indice_consumidor, "—");
-                SetTextField(descolorear_consumidor, productos.get(descolorear_consumidor), false);
-                SetTextField(indice_consumidor, productos.get(indice_consumidor), false);
+                if (productos.get(indice_consumidor) == "—") {
+                    JOptionPane.showMessageDialog(null, "Intentando consumir... Esperando al productor", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    productos.set(indice_consumidor, "—");
+                    SetTextField(descolorear_consumidor, productos.get(descolorear_consumidor), false);
+                    SetTextField(indice_consumidor, productos.get(indice_consumidor), false);
 
-                indice_consumidor++;
-                total_productos--;
+                    indice_consumidor++;
+                    total_productos--;
+                }
+                
             }
             SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
             descolorear_consumidor = indice_consumidor-1;
