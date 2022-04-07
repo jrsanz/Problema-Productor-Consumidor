@@ -2,12 +2,15 @@ package problema.productor.consumidor;
 
 //import com.sun.glass.events.KeyEvent; //error
 import java.awt.Color;
+import java.awt.Image;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 
 
@@ -30,6 +33,11 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     int descolorear_productor = 0;
     int descolorear_consumidor = 0;
     
+    ImageIcon producir = new ImageIcon("src/img/producir.png");
+    ImageIcon consumir = new ImageIcon("src/img/consumir.png");
+    ImageIcon esperar = new ImageIcon("src/img/esperar.png");
+    ImageIcon dormir = new ImageIcon("src/img/dormir.png");
+    
     
     public Productor_Consumidor() {
         initComponents();
@@ -43,6 +51,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         
         SetArrayList();                 //Asigna por defecto el valor "—", lo que quiere decir que no hay productos agregados
         productor_consumidor.start();   //Comienza a ejecutarse el hilo
+        
+        Icon icono_productor = new ImageIcon(producir.getImage().getScaledInstance(iconProductor.getWidth(), iconProductor.getHeight(), Image.SCALE_DEFAULT));
+        iconProductor.setIcon(icono_productor);
+        Icon icono_consumidor = new ImageIcon(consumir.getImage().getScaledInstance(iconConsumidor.getWidth(), iconConsumidor.getHeight(), Image.SCALE_DEFAULT));
+        iconConsumidor.setIcon(icono_consumidor);
+        
+        iconos(0, 0);
     }
     
     
@@ -75,15 +90,77 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         return numero_aleatorio;
     }
     
+    private void iconos(int opc_producir, int opc_consumir) {   //0 = Sin Icono, 1 = Trabajar, 2 = Dormir, 3 = Esperar
+        switch(opc_producir) {
+            case 0:
+                iconProductor1.setVisible(false);
+                iconProductor2.setVisible(false);
+            case 1:
+                Icon productor_trabajar_1 = new ImageIcon(producir.getImage().getScaledInstance(iconProductor1.getWidth(), iconProductor1.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor1.setIcon(productor_trabajar_1);
+                Icon productor_trabajar_2 = new ImageIcon(producir.getImage().getScaledInstance(iconProductor2.getWidth(), iconProductor2.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor2.setIcon(productor_trabajar_2);
+                break;
+            case 2:
+                Icon productor_dormir_1 = new ImageIcon(dormir.getImage().getScaledInstance(iconProductor1.getWidth(), iconProductor1.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor1.setIcon(productor_dormir_1);
+                Icon productor_dormir_2 = new ImageIcon(dormir.getImage().getScaledInstance(iconProductor2.getWidth(), iconProductor2.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor2.setIcon(productor_dormir_2);
+                break;
+            case 3:
+                Icon productor_esperar_1 = new ImageIcon(esperar.getImage().getScaledInstance(iconProductor1.getWidth(), iconProductor1.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor1.setIcon(productor_esperar_1);
+                Icon productor_esperar_2 = new ImageIcon(esperar.getImage().getScaledInstance(iconProductor2.getWidth(), iconProductor2.getHeight(), Image.SCALE_DEFAULT));
+                iconProductor2.setIcon(productor_esperar_2);
+                break;
+        }
+        
+        if(opc_producir != 0) {
+            iconProductor1.setVisible(true);
+            iconProductor2.setVisible(true);
+        }
+        
+        switch(opc_consumir) {
+            case 0:
+                iconConsumidor1.setVisible(false);
+                iconConsumidor2.setVisible(false);
+            case 1:
+                Icon consumidor_trabajar_1 = new ImageIcon(consumir.getImage().getScaledInstance(iconConsumidor1.getWidth(), iconConsumidor1.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor1.setIcon(consumidor_trabajar_1);
+                Icon consumidor_trabajar_2 = new ImageIcon(consumir.getImage().getScaledInstance(iconConsumidor2.getWidth(), iconConsumidor2.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor2.setIcon(consumidor_trabajar_2);
+                break;
+            case 2:
+                Icon consumidor_dormir_1 = new ImageIcon(dormir.getImage().getScaledInstance(iconConsumidor1.getWidth(), iconConsumidor1.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor1.setIcon(consumidor_dormir_1);
+                Icon consumidor_dormir_2 = new ImageIcon(dormir.getImage().getScaledInstance(iconConsumidor2.getWidth(), iconConsumidor2.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor2.setIcon(consumidor_dormir_2);
+                break;
+            case 3:
+                Icon consumidor_esperar_1 = new ImageIcon(esperar.getImage().getScaledInstance(iconConsumidor1.getWidth(), iconConsumidor1.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor1.setIcon(consumidor_esperar_1);
+                Icon consumidor_esperar_2 = new ImageIcon(esperar.getImage().getScaledInstance(iconConsumidor2.getWidth(), iconConsumidor2.getHeight(), Image.SCALE_DEFAULT));
+                iconConsumidor2.setIcon(consumidor_esperar_2);
+                break;
+        }
+        
+        if(opc_consumir != 0) {
+            iconConsumidor1.setVisible(true);
+            iconConsumidor2.setVisible(true);
+        }
+    }
+    
     private void Producir(int veces) {
         if(total_productos + veces >= max) {
+            iconos(3, 1);
+            lblProdujo.setText("Intentó producir " + veces + " producto(s).");
             JOptionPane.showMessageDialog(null, "No es posible producir más productos de los que se pueden almacenar.", "Error del productor", JOptionPane.ERROR_MESSAGE);
         }
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarProductor();
                 if (productos.get(indice_productor) != "—") {
-                    //Poner icono productor esperando
+                    iconos(3, 1);
                     JOptionPane.showMessageDialog(null, "Intentando producir... Esperando al consumidor", "Error del productor", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -100,8 +177,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
             SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
             descolorear_productor = indice_productor-1;
-            //Poner icono productor trabajando
-            //Poner icono consumidor durmiendo
+            iconos(1, 2);
             lblConsumio.setText("");
             lblProdujo.setText("Produjo " + veces + " producto(s).");
         }
@@ -109,13 +185,15 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     
     private void Consumir(int veces) {
         if(total_productos < veces) {
+            iconos(1, 3);
+            lblConsumio.setText("Intentó consumir " + veces + " producto(s).");
             JOptionPane.showMessageDialog(null, "No es posible consumir más productos de los que hay en la lista.", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
         }
         else {
             for(int i = 0; i < veces; i++) {
                 EvaluarConsumidor();
                 if (productos.get(indice_consumidor) == "—") {
-                    //Poner icono consumidor esperando
+                    iconos(1, 3);
                     JOptionPane.showMessageDialog(null, "Intentando consumir... Esperando al productor", "Error del consumidor", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -131,8 +209,7 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 SetTextField(indice_productor-1, productos.get(indice_productor-1), true);
             SetTextField(indice_consumidor-1, productos.get(indice_consumidor-1), true);
             descolorear_consumidor = indice_consumidor-1;
-            //Poner icono consumidor trabajando
-            //Poner icono productor durmiendo
+            iconos(2, 1);
             lblProdujo.setText("");
             lblConsumio.setText("Consumió " + veces + " producto(s).");
         }
@@ -187,6 +264,8 @@ public class Productor_Consumidor extends javax.swing.JFrame {
     private void initComponents() {
 
         lblTitulo = new javax.swing.JLabel();
+        iconProductor = new javax.swing.JLabel();
+        iconConsumidor = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         txt1 = new javax.swing.JTextField();
         txt2 = new javax.swing.JTextField();
@@ -211,9 +290,13 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         lblProductor = new javax.swing.JLabel();
         lblProdujo = new javax.swing.JLabel();
+        iconProductor1 = new javax.swing.JLabel();
+        iconProductor2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         lblConsumidor = new javax.swing.JLabel();
         lblConsumio = new javax.swing.JLabel();
+        iconConsumidor1 = new javax.swing.JLabel();
+        iconConsumidor2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -221,9 +304,14 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 formKeyPressed(evt);
             }
         });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("Productor-Consumidor");
+        getContentPane().add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 30, 250, 35));
+        getContentPane().add(iconProductor, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 35, 32, 32));
+        getContentPane().add(iconConsumidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 35, 32, 32));
 
         jPanel1.setBackground(new java.awt.Color(153, 176, 192));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -415,106 +503,43 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(55, 95, 470, 246));
+
         jPanel2.setBackground(new java.awt.Color(255, 217, 102));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel2.setMaximumSize(new java.awt.Dimension(180, 100));
         jPanel2.setMinimumSize(new java.awt.Dimension(180, 100));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblProductor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblProductor.setText("PRODUCTOR");
+        jPanel2.add(lblProductor, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 15, -1, -1));
 
+        lblProdujo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblProdujo.setText("Produjo X productos.");
+        jPanel2.add(lblProdujo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, 200, 20));
+        jPanel2.add(iconProductor1, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 20, 32, 32));
+        jPanel2.add(iconProductor2, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 20, 32, 32));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(lblProdujo))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(lblProductor)))
-                .addContainerGap(39, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblProductor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(lblProdujo)
-                .addGap(33, 33, 33))
-        );
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 375, 200, 100));
 
         jPanel3.setBackground(new java.awt.Color(255, 181, 144));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel3.setMaximumSize(new java.awt.Dimension(180, 100));
         jPanel3.setMinimumSize(new java.awt.Dimension(180, 100));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblConsumidor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblConsumidor.setText("CONSUMIDOR");
+        jPanel3.add(lblConsumidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 15, -1, -1));
 
+        lblConsumio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblConsumio.setText("Consumió X productos.");
+        jPanel3.add(lblConsumio, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, 200, 15));
+        jPanel3.add(iconConsumidor1, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 20, 32, 32));
+        jPanel3.add(iconConsumidor2, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 20, 32, 32));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(36, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(lblConsumio)
-                        .addGap(34, 34, 34))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(lblConsumidor)
-                        .addGap(43, 43, 43))))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblConsumidor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(lblConsumio)
-                .addGap(35, 35, 35))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitulo)
-                        .addGap(178, 178, 178))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(64, 64, 64))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(lblTitulo)
-                .addGap(34, 34, 34)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 375, 200, 100));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -581,16 +606,22 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JTextField component = new JTextField();
-                component.addKeyListener(new MyKeyListener());
+                //JTextField component = new JTextField();
+                //component.addKeyListener(new MyKeyListener());
                 Productor_Consumidor p = new Productor_Consumidor();
-                p.add(component);
+                //p.add(component);
                 p.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel iconConsumidor;
+    private javax.swing.JLabel iconConsumidor1;
+    private javax.swing.JLabel iconConsumidor2;
+    private javax.swing.JLabel iconProductor;
+    private javax.swing.JLabel iconProductor1;
+    private javax.swing.JLabel iconProductor2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
