@@ -1,6 +1,9 @@
+//Autores:
+//Jesús Ricardo Delgado Sánchez
+//Isaías Juarez Esparza
+
 package problema.productor.consumidor;
 
-//import com.sun.glass.events.KeyEvent; //error
 import java.awt.Color;
 import java.awt.Image;
 import java.util.ArrayList;
@@ -304,14 +307,10 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 formKeyPressed(evt);
             }
         });
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("Productor-Consumidor");
-        getContentPane().add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 30, 250, 35));
-        getContentPane().add(iconProductor, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 35, 32, 32));
-        getContentPane().add(iconConsumidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 35, 32, 32));
 
         jPanel1.setBackground(new java.awt.Color(153, 176, 192));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -503,8 +502,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(55, 95, 470, 246));
-
         jPanel2.setBackground(new java.awt.Color(255, 217, 102));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel2.setMaximumSize(new java.awt.Dimension(180, 100));
@@ -520,8 +517,6 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         jPanel2.add(lblProdujo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, 200, 20));
         jPanel2.add(iconProductor1, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 20, 32, 32));
         jPanel2.add(iconProductor2, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 20, 32, 32));
-
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 375, 200, 100));
 
         jPanel3.setBackground(new java.awt.Color(255, 181, 144));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -539,7 +534,44 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         jPanel3.add(iconConsumidor1, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 20, 32, 32));
         jPanel3.add(iconConsumidor2, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 20, 32, 32));
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 375, 200, 100));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(123, 123, 123)
+                .addComponent(iconProductor, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addComponent(iconConsumidor, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(iconProductor, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(iconConsumidor, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(28, 28, 28)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -606,10 +638,10 @@ public class Productor_Consumidor extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //JTextField component = new JTextField();
-                //component.addKeyListener(new MyKeyListener());
+                JTextField component = new JTextField();
+                component.addKeyListener(new MyKeyListener());
                 Productor_Consumidor p = new Productor_Consumidor();
-                //p.add(component);
+                p.add(component);
                 p.setVisible(true);
             }
         });
@@ -660,3 +692,7 @@ class MyKeyListener extends KeyAdapter {   //Clase que detecta el evento del tec
     }
   }
 }
+
+//Autores:
+//Jesús Ricardo Delgado Sánchez
+//Isaías Juarez Esparza
